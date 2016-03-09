@@ -1,0 +1,52 @@
+# import full annual dataset
+require (foreign)
+mydata <- read.spss("E:/Airlines Delay rev.sav", use.value.labels = TRUE, to.data.frame = TRUE)
+
+# data summary
+summary (mydata) 
+
+# create monthly pie chart using frequency distribution data
+slices <- c(8.0, 7.1, 8.6, 8.6, 9.0, 8.8, 8.1, 8.5, 8.1, 8.2)
+lbls <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+lbls <- paste(lbls, slices) # add percent to labels
+lbls <- paste(lbls,"%", sep ="") # add % to labels
+pie(slices, labels = lbls, col = rainbow(length(lbls)),
+main = "Pie Chart of Number of Flights")
+
+# delay rates of departures and arrivals
+DEP <- (mydata$DEP_DELAY_NEW)
+length(which(DEP >= 15))/length(which(DEP >= 0))
+ARR <- (mydata$ARR_DELAY_NEW)
+length(which(ARR >= 15))/length(which(ARR >= 0))
+
+# import winter dataset and summer dataset
+require (foreign)
+winterdata <- read.spss("C:/Users/Daniel/Desktop/Airlines Delay rev WINTER.sav", use.value.labels = TRUE, to.data.frame =TRUE)
+summerdata <- read.spss("C:/Users/Daniel/Desktop/Airlines Delay rev SUMMER.sav", use.value.labels = TRUE, to.data.frame =TRUE)
+
+# Weather Delay Rates for Flights in Winter and Summer Months
+length(which(winterdata$MONTH < 13))
+length(which(winterdata$WEATHER_DELAY > 0))
+length(which(winterdata$WEATHER_DELAY > 0))/length(which(winterdata$MONTH < 13))
+
+length(which(summerdata$MONTH < 13))
+length(which(summerdata$WEATHER_DELAY > 0))
+length(which(summerdata$WEATHER_DELAY > 0))/length(which(summerdata$MONTH < 13))
+
+# Weather Delay Rates for Delayed Flights in Winter and Summer Months
+winteromitdata <- na.omit(winterdata)
+length(which(winterdata$MONTH < 13))
+length(which(summerdata$WEATHER_DELAY > 0))
+length(which(summerdata$WEATHER_DELAY > 0))/length(which(summerdata$MONTH < 13))
+
+summeromitdata <- na.omit(summerdata)
+length(which(summerdata$WEATHER_DELAY > 0))/length(which(summerdata$MONTH < 13))
+
+# Mean and Standard Deviation of Weather Delays in Winter and Summer (in minutes)
+mean(winteromitdata$WEATHER_DELAY)
+mean(summeromitdata$WEATHER_DELAY)
+sd(summeromitdata$WEATHER_DELAY)
+sd(winteromitdata$WEATHER_DELAY)
+
+# Two Sample t-Test Comparing the Means 
+t.test(summeromitdata$WEATHER_DELAY, winteromitdata$WEATHER_DELAY, alternative = "greater")
